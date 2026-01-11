@@ -929,58 +929,100 @@ h2.art-logo-text {
     display: none !important;
 }
 
-/* 2026: gallery slider styling (moves inline styles into CSS) */
-.jssor-slider {
-    position: relative;
-    margin: 0 auto;
-    top: 0;
-    left: 0;
-    width: 100%;
-    max-width: 600px;
-    height: 345px;
+/* 2026: gallery slider (no external libraries) */
+.gallery-slider {
+    max-width: 700px;
+}
+
+.gallery-main {
+    background: #000;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
     overflow: hidden;
-    visibility: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.jssor-loading {
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-.jssor-loading-overlay {
-    background-color: #000000;
-    opacity: 0.7;
-    position: absolute;
+.gallery-main-image {
     display: block;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 70vh;
+    opacity: 1;
+    transition: opacity 1000ms ease-in-out;
+    will-change: opacity;
 }
 
-.jssor-loading-image {
-    position: absolute;
+.gallery-main-image.is-fading {
+    opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gallery-main-image {
+        transition: none !important;
+    }
+}
+
+/* Override Artisteer default image chrome for gallery images */
+.gallery-slider .gallery-main-image,
+.gallery-slider .gallery-thumb img {
+    margin: 0;
+    border: 0;
+}
+
+.gallery-controls {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.gallery-control {
+    padding: 6px 10px;
+    border-radius: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.2);
+    color: #fff;
+    cursor: pointer;
+}
+
+.gallery-control:hover,
+.gallery-control:focus {
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.gallery-status {
+    flex: 1;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.gallery-thumbs {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 8px;
+}
+
+.gallery-thumb {
     display: block;
-    background: url('../photos/loading.gif') no-repeat center center;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.jssor-slides {
-    cursor: default;
-    position: relative;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 345px;
+    border-radius: 3px;
     overflow: hidden;
+    border: 2px solid transparent;
 }
 
-.jssor-slide {
-    display: none;
+.gallery-thumb[aria-current="true"] {
+    border-color: rgba(255, 255, 255, 0.7);
+}
+
+.gallery-thumb img {
+    display: block;
+    width: 100%;
+    height: 56px;
+    object-fit: contain;
+    background: #111;
 }
 
 /* 2026: responsive layout overrides */
@@ -995,6 +1037,11 @@ h2.art-logo-text {
 
     .art-content-layout .art-sidebar1 {
         width: auto;
+    }
+
+    /* Mobile: avoid showing two navigation menus (top menu + sidebar vmenu). */
+    .art-sidebar1 .art-vmenublock {
+        display: none;
     }
 
     div.art-header {
@@ -1013,14 +1060,74 @@ h2.art-logo-text {
         display: none;
     }
 
+    /* 2026: make the stacked top menu match the art-vmenu block style */
+    .art-menu {
+        padding: 10px;
+    }
+
+    .art-menu li {
+        margin: 0 0 8px 0;
+    }
+
+    .art-menu a,
+    .art-menu a:link,
+    .art-menu a:visited,
+    .art-menu a:hover {
+        letter-spacing: 0;
+        text-transform: none;
+    }
+
     .art-menu a {
-        height: auto;
+        width: 100%;
+        height: 49px;
+        overflow: hidden;
+    }
+
+    .art-menu a .l,
+    .art-menu a .r {
+        height: 157px;
+        background-image: url('../images/vmenuitem.png');
+    }
+
+    .art-menu a .l {
+        left: 0;
+        right: 27px;
+    }
+
+    .art-menu a .r {
+        width: 852px;
+        right: 0;
+        clip: rect(auto, auto, auto, 825px);
     }
 
     .art-menu a .t {
-        line-height: 44px;
+        display: block;
+        position: relative;
+        top: 0;
+        line-height: 49px;
+        padding: 0 13px 0 23px;
         text-align: left;
-        padding: 0 14px;
+        font-family: Tahoma, Arial, Helvetica, Sans-Serif;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 18px;
+        color: #FAFAF9;
+    }
+
+    .art-menu a:hover .l,
+    .art-menu a:hover .r,
+    .art-menu li:hover>a .l,
+    .art-menu li:hover>a .r {
+        top: -54px;
+    }
+
+    .art-menu a.active .l,
+    .art-menu a.active .r {
+        top: -108px;
+    }
+
+    .art-menu a.active .t {
+        color: #FDFDFC;
     }
 }
 

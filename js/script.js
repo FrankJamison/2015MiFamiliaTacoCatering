@@ -14,7 +14,7 @@
     function getCurrentPageFilename() {
         var path = window.location.pathname || '';
         var last = path.split('/').pop();
-        return last || 'index.htm';
+        return last || 'index.html';
     }
 
     function normalizeHrefToFilename(href) {
