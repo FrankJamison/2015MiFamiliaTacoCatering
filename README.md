@@ -1,41 +1,56 @@
-# Mi Familia Taco Catering (2015)
+# Mi Familia Taco Catering
 
-Static marketing site for **Mi Familia Taco Catering** (multi-page brochure site). Originally built as classic `.htm` pages with an Artisteer-generated theme; updated to `.html` pages with light JavaScript for navigation behavior and a photo gallery slider.
+Static multi-page marketing site for Mi Familia Taco Catering. The site is plain HTML/CSS with a small amount of vanilla JavaScript for theme/navigation behavior and a lightweight photo gallery slider.
 
-This repo is a good “small-but-real” example of shipping a complete website: consistent navigation across pages, a conversion flow (quote request), SEO meta tags, and a light sprinkle of unobtrusive JavaScript.
+Live preview:
 
-## Highlights (design + development)
+- https://mifamiliatacos.fcjamison.com/
 
-- **Cohesive theme + layout system**: two-column layout with reusable “sheet” components, headers, and menu blocks (see `art-*` classes throughout the markup).
-- **Conversion funnel**: `catering.html` → `quote.html` form → `thankyou.html` / `error.html` redirect flow.
-- **Photo gallery UX**: slider-style gallery with thumbnail navigation (vanilla JS in `js/gallery-slider.js`).
-- **Progressive enhancement**: the site works as plain HTML/CSS; JS mainly enhances menus (active state/hover behavior) and the gallery.
-- **Modernized baseline (2026 refresh)**: HTML5 doctype + viewport meta, improved responsive behavior, and no jQuery requirement.
-- **SEO basics**: per-page `<title>`, and descriptive `meta` tags (description/keywords).
+## Quick start (dev)
+
+1. Start a static server from the repo root.
+2. Open the site in a browser.
+3. Edit the `.html` pages and refresh.
+
+There is no build step and no dependency install required.
+
+## Project goals / non-goals
+
+- Goal: simple, host-anywhere static site (no build step, no framework).
+- Goal: progressive enhancement (works without JS; JS improves UX).
+- Non-goal: modern SPA routing, bundling, or a component system.
 
 ## Tech stack
 
-- HTML: **HTML5**
-- CSS: Artisteer v3 theme output (design by Artisteer; development updates by Frank Jamison)
+- HTML: HTML5 pages
+- CSS: single stylesheet at `css/style.css` (Artisteer theme output + updates)
 - JavaScript:
-  - `js/script.js`: small vanilla JS enhancements (menu separators, vmenu “active” state)
-  - `js/gallery-slider.js`: lightweight gallery slider behavior (no external libraries)
+  - `js/script.js`: theme enhancements (menu separators + vertical-menu active-link highlighting)
+  - `js/gallery-slider.js`: gallery slider (thumb navigation, keyboard support, optional autoplay)
 
-## Site map
+## Repo layout
 
-- `index.html` — Home / welcome copy
-- `stand.html` — Taco stand menu and hours
-- `catering.html` — Catering overview + link to quote request
-- `quote.html` — Catering packages + “Request a Quote” form
-- `gallery.html` — Photo gallery (vanilla slider)
-- `about-us.html` — About copy
-- `contact-us.html` — Phone numbers + email link
-- `thankyou.html` — Confirmation page after quote submission
-- `error.html` — Error page if submission fails
+- `*.html`: content pages
+- `css/style.css`: global styles
+- `js/`: site JS
+- `images/`: theme images/assets
+- `photos/`: gallery images used by `gallery.html`
+- `.vscode/tasks.json`: convenience tasks
+
+## Pages
+
+- `index.html` — Home
+- `stand.html` — Taco stand
+- `catering.html` — Catering overview
+- `quote.html` — Quote request form
+- `gallery.html` — Gallery slider
+- `about-us.html` — About
+- `contact-us.html` — Contact
+- `thankyou.html` / `error.html` — Form redirects
 
 ## Run locally
 
-You can open `index.html` directly in a browser, but using a local static server avoids file:// restrictions and is closer to production behavior.
+Because this is a static site, any static server works. Opening files directly via `file://` also works, but a server is closer to production behavior.
 
 ### Option A: Python
 
@@ -43,7 +58,7 @@ You can open `index.html` directly in a browser, but using a local static server
 python -m http.server 8000
 ```
 
-Then visit `http://127.0.0.1:8000/index.html`.
+Then browse to `http://127.0.0.1:8000/index.html`.
 
 ### Option B: Node
 
@@ -51,48 +66,87 @@ Then visit `http://127.0.0.1:8000/index.html`.
 npx http-server -p 8000
 ```
 
-Then visit `http://127.0.0.1:8000/index.html`.
+Then browse to `http://127.0.0.1:8000/index.html`.
 
-## Quote form behavior
+### VS Code task: Open in Browser (localhost)
 
-The quote form on `quote.html` posts to a hosted form handler:
+This repo includes a VS Code task named **Open in Browser** configured in `.vscode/tasks.json`.
 
-- Endpoint: `http://www.powweb.com/scripts/formemail.bml`
-- Required fields are configured via hidden inputs (`required`, `order`)
-- Recipient is set via hidden input (`my_email`)
-- Redirects to live URLs on success/failure (`thankyou_url`, `error_url`)
+- Current behavior: launches Chrome to `http://mifamiliatacocatering.localhost/`
+- What that implies: you need something serving this folder on port **80** for the host name `mifamiliatacocatering.localhost`.
 
-When running locally, submitting the form will still attempt to post to that external endpoint.
+Notes:
+
+- `*.localhost` domains typically resolve to `127.0.0.1` automatically in modern browsers, but you still need a web server bound to that host/port.
+- If you’re using `python -m http.server 8000`, the task URL won’t match. To make the task work with the Python/Node examples above, change the task URL to `http://127.0.0.1:8000/index.html`.
+
+Practical options depending on what you want:
+
+- Keep the task as-is (port 80): run a server on port `80` (may require admin/elevated shell on Windows):
+  - `python -m http.server 80`
+  - or `npx http-server -p 80`
+- Keep the `mifamiliatacocatering.localhost` host but use a non-80 port: access `http://mifamiliatacocatering.localhost:8000/index.html` in the browser (and update the task URL accordingly).
+- Simplest: update the task URL to match whatever local server/port you use (example above).
+
+## Quote form behavior (and local/testing caveats)
+
+The form in `quote.html` posts to a hosted handler:
+
+- Action: `http://www.powweb.com/scripts/formemail.bml`
+- Redirects:
+  - success: `thankyou_url` → `http://mifamiliatacocatering.com/thankyou.html`
+  - failure: `error_url` → `http://mifamiliatacocatering.com/error.html`
+
+Implications for developers:
+
+- When running locally, submitting the form will still POST to that external endpoint.
+- If you’re viewing the site over **HTTPS** (including the live preview), an **HTTP** form action/redirect may be blocked or behave unexpectedly by the browser due to mixed-content rules.
+
+## Making edits safely
+
+- Navigation is duplicated on every page (top nav: `ul.art-menu`, sidebar nav: `ul.art-vmenu`). If you change links or labels, update both menus across pages.
+- Gallery images are hard-coded in `gallery.html` as `photos/01.jpg` … `photos/20.jpg`. If you add/remove photos, update both the main image and the thumbnail list.
+
+### Gallery slider configuration
+
+The slider is initialized by `js/gallery-slider.js` on any element with `data-gallery`.
+
+Attributes used by `gallery.html` today:
+
+- `data-autoplay-interval="3000"`: time between slides (ms)
+- `data-autoplay="on"`: forces autoplay on, even if the user has `prefers-reduced-motion: reduce`
+
+Other supported attributes (if you ever need them):
+
+- `data-autoplay="off"`: disable autoplay
+- `data-autoplay-pause="hover"`: pause while the mouse is hovering the gallery
+
+Keyboard:
+
+- When the gallery container is focused, left/right arrows navigate.
+
+### Theme/navigation JS
+
+`js/script.js` intentionally stays small and runs on `DOMContentLoaded`:
+
+- Inserts separator elements into the Artisteer menus (`ul.art-menu`, `ul.art-vmenu`) if they’re missing
+- Adds an `.active` class to the vertical menu link that matches the current page filename
+
+Because the top and side nav are duplicated across pages, changes are mostly “mechanical” edits: update the markup consistently across all `*.html` files.
+
+## Troubleshooting
+
+- Images/CSS missing when running locally: make sure you started the server from the repo root (the folder that contains `index.html`, `css/`, `images/`, `js/`).
+- VS Code task opens a blank page: the task points at `http://mifamiliatacocatering.localhost/` (port 80). If you’re serving on port 8000, update the task URL or start a server on port 80.
+- Quote form doesn’t work on HTTPS: the form action is HTTP and may be blocked as mixed content. Test the form on an HTTP origin or change to a secure form handler.
 
 ## Deployment
 
-This project can be deployed to any static host (traditional hosting, S3, Netlify, etc.).
+Deploy by uploading the folder to any static host.
 
-- Upload the entire folder (relative paths assume `css/`, `js/`, `images/`, `photos/` remain intact).
-- Ensure the host serves `.html` files as HTML.
+- Keep relative paths intact (`css/`, `js/`, `images/`, `photos/`).
+- Ensure the host serves `.html` as HTML.
 
-## Developer notes / maintenance
+## Attribution
 
-- **Navigation is duplicated** in the markup (top menu `ul.art-menu` + sidebar menu `ul.art-vmenu`). When changing nav items, update both on each page.
-- **Gallery images** are hard-coded in `gallery.html` as a thumbnail list pointing to `photos/01.jpg`–`photos/20.jpg`.
-- Gallery thumbnails are simple links; the slider behavior progressively enhances them.
-- `js/script.js` is intentionally minimal and runs on `DOMContentLoaded`.
-
-## 2026 refresh notes
-
-- Migrated pages from legacy `.htm` to `.html` and updated internal links.
-- Markup updated to HTML5 + viewport meta.
-- Legacy IE6/IE7 shims removed (no old conditional IE markup required).
-- jQuery removed (theme behavior is now vanilla JS).
-- Removed the broken legacy gallery (Jssor) and replaced it with a lightweight vanilla JS slider.
-  - Autoplay is configured via `data-autoplay-interval` (currently `3000` ms in `gallery.html`).
-  - Fade transitions are enabled (1000ms).
-  - Autoplay is resilient to user interaction (no “stuck after click/focus” behavior).
-  - Autoplay respects `prefers-reduced-motion` by default; this repo explicitly enables autoplay on the gallery via `data-autoplay="on"`.
-- Gallery image display updated to avoid stretching (preserves aspect ratio on the main image and thumbnails).
-- Added responsive layout improvements (the theme is fixed-width by default).
-- Mobile navigation improved:
-  - Top navigation stacks cleanly at small widths.
-  - Mobile top nav is styled to match the sidebar `art-vmenublock` look.
-  - Sidebar menu is hidden at mobile widths to avoid duplicate navigation.
-- Dev tooling: VS Code “Open in Browser” task targets `index.html`.
+- Theme/layout originally generated with Artisteer (see site footer for attribution).
